@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Beaulieu\Infrastructure;
 
+use Beaulieu\Domain\Media;
 use Beaulieu\Domain\Movie;
 use Beaulieu\Domain\MovieRepositoryInterface;
 use Beaulieu\Domain\MovieTitle;
@@ -43,8 +44,12 @@ final class PodMovieRepository implements MovieRepositoryInterface
                 null,
                 $podMovie->display('acteurs_actrices'),
                 $podMovie->display('synopsis'),
-                $podMovie->display('affiche._src'),
-                'trailer_link_todo',
+                $podMovie->display('affiche._src')
+                    ? new Media($podMovie->display('affiche._src'), $podMovie->display('affiche._img.alt_text'))
+                    : null,
+                $podMovie->display('trailer._src')
+                    ? new Media($podMovie->display('trailer._src'), $podMovie->display('trailer._img.alt_text'))
+                    : null,
                 $shows
             );
 

@@ -15,8 +15,8 @@ final class Movie
         private ?int $durationInMinutes,
         private string $castingDescription,
         private string $synopsis,
-        private ?string $posterLink = null,
-        private ?string $trailerLink = null,
+        private ?Media $poster = null,
+        private ?Media $trailer = null,
         private array $shows = []
     ) {
     }
@@ -46,14 +46,14 @@ final class Movie
         return $this->synopsis;
     }
 
-    public function posterLink(): ?string
+    public function poster(): ?Media
     {
-        return $this->posterLink;
+        return $this->poster;
     }
 
-    public function trailerLink(): ?string
+    public function trailer(): ?Media
     {
-        return $this->trailerLink;
+        return $this->trailer;
     }
 
     /**

@@ -1,16 +1,24 @@
-<div>
+<div class="planning-week-nav">
     <a href="?fromDate={{ last_week|e }}">Semaine précédente</a>
     |
     <a href="?">Cette semaine</a>
     |
     <a href="?fromDate={{ next_week|e }}">Semaine suivante</a>
 </div>
-{{ planning | raw }}
+<div class="planning-week-movies">
 {% for movie in movies %}
     {#{{ dump(movie.shows()) }}#}
     <div class="movie-item">
         <div class="movie-item-poster">
-            <img src="{{ movie.posterLink()|e }}"  alt=""/>
+            <img
+                width="204"
+                height="272"
+                src="{{ movie.poster().link()|e }}"
+                class="attachment-title size-title"
+                alt=""
+                decoding="async"
+                loading="lazy"
+            />
         </div>
         <div class="movie-item-content">
             <h2>{{ movie.title().asString() }}</h2>
@@ -28,3 +36,4 @@
         {% endfor %}
     </div>
 {% endfor %}
+</div>
