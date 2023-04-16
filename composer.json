@@ -13,6 +13,7 @@
         }
     ],
     "require": {
+        "php": ">=8.0",
         "webmozart/assert": "^1.11",
         "php-di/php-di": "^7.0",
         "twig/twig": "^3.0"
