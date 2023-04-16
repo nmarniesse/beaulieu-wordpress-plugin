@@ -1,0 +1,30 @@
+<div>
+    <a href="?fromDate={{ last_week|e }}">Semaine précédente</a>
+    |
+    <a href="?">Cette semaine</a>
+    |
+    <a href="?fromDate={{ next_week|e }}">Semaine suivante</a>
+</div>
+{{ planning | raw }}
+{% for movie in movies %}
+    {#{{ dump(movie.shows()) }}#}
+    <div class="movie-item">
+        <div class="movie-item-poster">
+            <img src="{{ movie.posterLink()|e }}"  alt=""/>
+        </div>
+        <div class="movie-item-content">
+            <h2>{{ movie.title().asString() }}</h2>
+            <div>{{ movie.shortDescription() }}</div>
+            <div>{{ movie.castingDescription() }}</div>
+            <div>{{ movie.synopsis()|raw }}</div>
+        </div>
+        {% for show in movie.shows() %}
+            <div class="movie-item-projections">
+                <p style="margin-bottom: 8px;" class="seance">
+                    <span class="showtimeDate">{{ show.startAt()|date('Y-m-d H:i') }}</span>
+                    <span class="showtime">{{ show.version().asString() }}</span>
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}

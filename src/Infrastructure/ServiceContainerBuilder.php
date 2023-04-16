@@ -7,6 +7,7 @@ namespace Beaulieu\Infrastructure;
 use Beaulieu\Domain\MovieRepositoryInterface;
 use DI\Container;
 use Twig\Environment;
+use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 
 final class ServiceContainerBuilder
@@ -33,6 +34,11 @@ final class ServiceContainerBuilder
     {
         $loader = new FilesystemLoader(self::PROJECT_PATH . self::TWIG_PATH);
 
-        return new Environment($loader);
+        $twig = new Environment($loader, [
+            'debug' => true,
+        ]);
+        $twig->addExtension(new DebugExtension());
+
+        return $twig;
     }
 }

@@ -7,12 +7,14 @@ namespace Beaulieu\Infrastructure;
 use Beaulieu\Domain\Movie;
 use Beaulieu\Domain\MovieRepositoryInterface;
 use Beaulieu\Domain\MovieTitle;
+use Beaulieu\Domain\Show;
+use Beaulieu\Domain\Version;
 
 final class PodMovieRepository implements MovieRepositoryInterface
 {
     public function getMoviesForWeek(\DateTimeImmutable $firstDay): array
     {
-        $movie = pods('film');
+        $podMovie = pods('film');
 		$where = [];
 		$date = $firstDay;
 		for ($i = 0; $i < 7; $i++) {
@@ -21,24 +23,52 @@ final class PodMovieRepository implements MovieRepositoryInterface
 			$where[] = 'projections_vf_stsme.meta_value LIKE "' . $date->format('Y-m-d') . '%"';
 			$date = $date->modify('+1 day');
 		}
-		$movie->find(['page' => 1, 'limit' => 20, 'where' => \implode(' OR ', $where)]);
+        $podMovie->find(['page' => 1, 'limit' => 20, 'where' => \implode(' OR ', $where)]);
 
 		$movies = [];
-		while ($movie->fetch()) {
-            $movie->id = $movie->id();
+		while ($podMovie->fetch()) {
+            $podMovie->id = $podMovie->id();
 
-            $movies[] = new Movie(
-                new MovieTitle($movie->display('post_title')),
-                $movie->display('description_courte'),
+            // @TODO: keep only projections that belong to the week
+            $shows = [
+                ...$this->createShowFromStorage($podMovie->display('projections_vf'), Version::createVF()),
+                ...$this->createShowFromStorage($podMovie->display('projections_vost'), Version::createVOSTF()),
+                ...$this->createShowFromStorage($podMovie->display('projections_vf_stsme'), Version::createVFSTSME()),
+            ];
+            \usort($shows, fn (Show $s1, Show $s2): int => $s1->startAt() <=> $s2->startAt());
+
+            $movie = new Movie(
+                new MovieTitle($podMovie->display('post_title')),
+                $podMovie->display('description_courte'),
                 null,
-                $movie->display('acteurs_actrices'),
-                $movie->display('synopsis'),
-                $movie->display('affiche._src'),
+                $podMovie->display('acteurs_actrices'),
+                $podMovie->display('synopsis'),
+                $podMovie->display('affiche._src'),
                 'trailer_link_todo',
+                $shows
             );
 
+            $movies[] = $movie;
         }
 
         return $movies;
+    }
+
+    /**
+     * @return Show[]
+     */
+    private function createShowFromStorage(string $data, Version $version): array
+    {
+        $shows = \array_map(
+            function (string $date) use ($version): ?Show {
+                $date = \DateTimeImmutable::createFromFormat('Y-m-d H:i', $date);
+                return $date instanceof \DateTimeImmutable
+                    ? new Show($date, $version)
+                    : null;
+            },
+            \explode(',', $data)
+        );
+
+        return \array_filter($shows);
     }
 }

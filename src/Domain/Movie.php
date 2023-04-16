@@ -6,25 +6,22 @@ namespace Beaulieu\Domain;
 
 final class Movie
 {
-    private array $shows = [];
-
+    /**
+     * @param Show[] $shows
+     */
     public function __construct(
         private MovieTitle $title,
         private string $shortDescription,
-        private ?int $durationInMinutes = null,
+        private ?int $durationInMinutes,
         private string $castingDescription,
         private string $synopsis,
         private ?string $posterLink = null,
-        private ?string $trailerLink = null
+        private ?string $trailerLink = null,
+        private array $shows = []
     ) {
     }
 
-    public function addShow(Show $show): void
-    {
-        $this->shows[] = $show;
-    }
-
-    public function title(): string
+    public function title(): MovieTitle
     {
         return $this->title;
     }

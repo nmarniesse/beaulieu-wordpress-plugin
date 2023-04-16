@@ -24,4 +24,9 @@ final class Version
     {
         return new self('VF ST-SME');
     }
+
+    public function asString(): string
+    {
+        return $this->version;
+    }
 }
