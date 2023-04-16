@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Beaulieu\Domain;
 
-final class Media
+final class Poster
 {
     public function __construct(
         private string $link,

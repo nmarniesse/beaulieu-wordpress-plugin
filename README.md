@@ -1,5 +1,9 @@
 # Wordpress plugin for Cinema Beaulieu
 
+This plugin is based on the [pods plugin](https://fr.wordpress.org/plugins/pods/) and provides:
+- a *film* type with several fields (casting, synopsis, duration, poster, trailer, ...)
+- a custom block to display the planning of the week
+
 ## Develop
 
 Requirements:

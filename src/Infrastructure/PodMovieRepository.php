@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Beaulieu\Infrastructure;
 
-use Beaulieu\Domain\Media;
+use Beaulieu\Domain\Poster;
 use Beaulieu\Domain\Movie;
 use Beaulieu\Domain\MovieRepositoryInterface;
 use Beaulieu\Domain\MovieTitle;
@@ -19,9 +19,9 @@ final class PodMovieRepository implements MovieRepositoryInterface
 		$where = [];
 		$date = $firstDay;
 		for ($i = 0; $i < 7; $i++) {
-			$where[] = 'projections_vf.meta_value LIKE "' . $date->format('Y-m-d') . '%"';
-			$where[] = 'projections_vost.meta_value LIKE "' . $date->format('Y-m-d') . '%"';
-			$where[] = 'projections_vf_stsme.meta_value LIKE "' . $date->format('Y-m-d') . '%"';
+			$where[] = 'shows_vf.meta_value LIKE "' . $date->format('Y-m-d') . '%"';
+			$where[] = 'shows_vost.meta_value LIKE "' . $date->format('Y-m-d') . '%"';
+			$where[] = 'shows_vf_stsme.meta_value LIKE "' . $date->format('Y-m-d') . '%"';
 			$date = $date->modify('+1 day');
 		}
         $podMovie->find(['page' => 1, 'limit' => 20, 'where' => \implode(' OR ', $where)]);
@@ -32,23 +32,23 @@ final class PodMovieRepository implements MovieRepositoryInterface
 
             // @TODO: keep only projections that belong to the week
             $shows = [
-                ...$this->createShowFromStorage($podMovie->display('projections_vf'), Version::createVF()),
-                ...$this->createShowFromStorage($podMovie->display('projections_vost'), Version::createVOSTF()),
-                ...$this->createShowFromStorage($podMovie->display('projections_vf_stsme'), Version::createVFSTSME()),
+                ...$this->createShowFromStorage($podMovie->display('shows_vf'), Version::createVF()),
+                ...$this->createShowFromStorage($podMovie->display('shows_vost'), Version::createVOSTF()),
+                ...$this->createShowFromStorage($podMovie->display('shows_vf_stsme'), Version::createVFSTSME()),
             ];
             \usort($shows, fn (Show $s1, Show $s2): int => $s1->startAt() <=> $s2->startAt());
 
             $movie = new Movie(
                 new MovieTitle($podMovie->display('post_title')),
-                $podMovie->display('description_courte'),
-                null,
-                $podMovie->display('acteurs_actrices'),
+                $podMovie->display('short_description'),
+                $podMovie->display('duration') ? (int) $podMovie->display('duration') : null,
+                $podMovie->display('casting_description'),
                 $podMovie->display('synopsis'),
-                $podMovie->display('affiche._src')
-                    ? new Media($podMovie->display('affiche._src'), $podMovie->display('affiche._img.alt_text'))
+                $podMovie->display('poster._src')
+                    ? new Poster($podMovie->display('poster._src'), $podMovie->display('poster._img.alt_text'))
                     : null,
                 $podMovie->display('trailer._src')
-                    ? new Media($podMovie->display('trailer._src'), $podMovie->display('trailer._img.alt_text'))
+                    ? new Poster($podMovie->display('trailer._src'), $podMovie->display('trailer._img.alt_text'))
                     : null,
                 $shows
             );

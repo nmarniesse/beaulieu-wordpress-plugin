@@ -21,7 +21,12 @@
             />
         </div>
         <div class="movie-item-content">
-            <h2>{{ movie.title().asString() }}</h2>
+            <h2>
+                {{ movie.title().asString() }}
+                {% if movie.duration() %}
+                    - {{ movie.duration() }}
+                {% endif %}
+            </h2>
             <div>{{ movie.shortDescription() }}</div>
             <div>{{ movie.castingDescription() }}</div>
             <div>{{ movie.synopsis()|raw }}</div>
