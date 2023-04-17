@@ -1,44 +1,53 @@
 <div class="planning-week-nav">
-    <a href="?fromDate={{ last_week|e }}">Semaine précédente</a>
+    <button onclick="window.location.href='?fromDate={{ last_week|e }}';">
+        Semaine précédente
+    </button>
     |
-    <a href="?">Cette semaine</a>
+    <button onclick="window.location.href='?';">
+        Cette semaine
+    </button>
     |
-    <a href="?fromDate={{ next_week|e }}">Semaine suivante</a>
+    <button onclick="window.location.href='?fromDate={{ next_week|e }}';">
+        Semaine suivante
+    </button>
 </div>
 <div class="planning-week-movies">
 {% for movie in movies %}
     {#{{ dump(movie.shows()) }}#}
     <div class="movie-item">
-        <div class="movie-item-poster">
-            <img
-                width="204"
-                height="272"
-                src="{{ movie.poster().link()|e }}"
-                class="attachment-title size-title"
-                alt=""
-                decoding="async"
-                loading="lazy"
-            />
-        </div>
-        <div class="movie-item-content">
-            <h2>
-                {{ movie.title().asString() }}
-                {% if movie.duration() %}
-                    - {{ movie.duration() }}
-                {% endif %}
-            </h2>
-            <div>{{ movie.shortDescription() }}</div>
-            <div>{{ movie.castingDescription() }}</div>
-            <div>{{ movie.synopsis()|raw }}</div>
-        </div>
-        {% for show in movie.shows() %}
-            <div class="movie-item-projections">
-                <p style="margin-bottom: 8px;" class="seance">
-                    <span class="showtimeDate">{{ show.startAt()|date('Y-m-d H:i') }}</span>
-                    <span class="showtime">{{ show.version().asString() }}</span>
-                </p>
+        <div class="movie-item-details">
+            <div class="movie-item-poster">
+                <img
+                    width="204"
+                    height="272"
+                    src="{{ movie.poster().link()|e }}"
+                    class="attachment-title size-title"
+                    alt=""
+                    decoding="async"
+                    loading="lazy"
+                />
             </div>
-        {% endfor %}
+            <div class="movie-item-content">
+                <h2>
+                    {{ movie.title().asString() }}
+                    {% if movie.duration() %}
+                        - {{ movie.duration() }}
+                    {% endif %}
+                </h2>
+                <div>{{ movie.shortDescription() }}</div>
+                <div>{{ movie.castingDescription() }}</div>
+                <div>{{ movie.synopsis()|raw }}</div>
+            </div>
+        </div>
+        <div class="movie-item-shows">
+            {% for show in movie.shows() %}
+                <div class="movie-item-show">
+                    <span class="show-date">{{ show.startAt()|date('l d') }}</span>
+                    <span class="show-hour">{{ show.startAt()|date('H:i') }}</span>
+                    <span class="show-version">{{ show.version().asString() }}</span>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endfor %}
 </div>
